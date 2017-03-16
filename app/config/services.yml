@@ -4,6 +4,16 @@ parameters:
     #parameter_name: value
 
 services:
-    #service_name:
-    #    class: AppBundle\Directory\ClassName
-    #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']
+    amqp_stream_connection:
+        class: PhpAmqpLib\Connection\AMQPStreamConnection
+        arguments: ['%amqp_host%', '%amqp_port%', '%amqp_user%', '%amqp_password%']
+
+    elevator_server:
+        class: AppBundle\Elevator\Application\Server
+        arguments: ['@amqp_stream_connection', '%amqp_queue_name%']
+        autowire: true
+
+    elevator_client:
+        class: AppBundle\Elevator\Application\Client
+        arguments: ['@amqp_stream_connection', '%amqp_queue_name%']
+        autowire: true

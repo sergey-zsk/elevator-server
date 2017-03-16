@@ -3,9 +3,7 @@
 namespace AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ElevatorServerRunCommand extends ContainerAwareCommand
@@ -14,21 +12,14 @@ class ElevatorServerRunCommand extends ContainerAwareCommand
     {
         $this
             ->setName('elevator:server-run')
-            ->setDescription('...')
-            ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
+            ->setDescription('Launch elevator server')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $argument = $input->getArgument('argument');
-
-        if ($input->getOption('option')) {
-            // ...
-        }
-
-        $output->writeln('Command result.');
+        $elevator = $this->getContainer()->get('elevator_server');
+        $elevator->execute();
     }
 
 }
