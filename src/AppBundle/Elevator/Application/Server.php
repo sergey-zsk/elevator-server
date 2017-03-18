@@ -8,10 +8,22 @@
 namespace AppBundle\Elevator\Application;
 
 
+use AppBundle\Elevator\Elevator;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class Server extends ApplicationDefault
 {
+
+    /**
+     * Server constructor.
+     * @param AMQPStreamConnection $connection
+     * @param string $queueName
+     */
+    function __construct(AMQPStreamConnection $connection, string $queueName)
+    {
+        parent::__construct($connection, $queueName);
+    }
 
     /**
      * {@inheritdoc}
@@ -27,5 +39,13 @@ class Server extends ApplicationDefault
         while(count($channel->callbacks)) {
             $channel->wait();
         }
+    }
+
+    /**
+     * @return Elevator
+     */
+    public function getElevator(): Elevator
+    {
+        return $this->elevator;
     }
 }

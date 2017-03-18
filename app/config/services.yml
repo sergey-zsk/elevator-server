@@ -8,6 +8,13 @@ services:
         class: PhpAmqpLib\Connection\AMQPStreamConnection
         arguments: ['%amqp_host%', '%amqp_port%', '%amqp_user%', '%amqp_password%']
 
+    elevator:
+        class: AppBundle\Elevator\Elevator
+        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_doors_activity_time%', '%elevator_initial_floor%']
+
+    initial_state:
+        class: AppBundle\Elevator\Command\WaitingExternal
+
     elevator_server:
         class: AppBundle\Elevator\Application\Server
         arguments: ['@amqp_stream_connection', '%amqp_queue_name%']
@@ -16,4 +23,9 @@ services:
     elevator_client:
         class: AppBundle\Elevator\Application\Client
         arguments: ['@amqp_stream_connection', '%amqp_queue_name%']
+        autowire: true
+
+    elevator_emulate:
+        class: AppBundle\Elevator\Device
+        arguments: ['@initial_state', '@elevator']
         autowire: true
