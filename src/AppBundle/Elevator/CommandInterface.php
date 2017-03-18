@@ -13,7 +13,22 @@ interface CommandInterface
     /**
      * Process current state
      *
-     * @return self
+     * @param Elevator $elevator
+     * @return CommandInterface
      */
-    public function execute();
+    public function execute(Elevator $elevator) : CommandInterface;
+
+    /**
+     * Description
+     *
+     * @return string
+     */
+    public function description();
+
+    /**
+     * Command Id
+     *
+     * @return int
+     */
+    public function id();
 }

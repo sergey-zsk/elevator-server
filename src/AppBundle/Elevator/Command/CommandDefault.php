@@ -9,32 +9,51 @@
 namespace AppBundle\Elevator\Command;
 
 
+use AppBundle\Elevator\CommandFactory;
 use AppBundle\Elevator\CommandInterface;
+use AppBundle\Elevator\Elevator;
 
-class CommandDefault implements CommandInterface
+abstract class CommandDefault implements CommandInterface
 {
+    /**
+     * @var CommandFactory
+     */
+    protected $commandFactory;
 
     /**
-     * CommandDefault constructor.
+     * CommandDefault constructor
+     *
+     * @param CommandFactory $commandFactory
      */
-    function __construct()
+    function __construct(CommandFactory $commandFactory)
     {
-        echo '[', date('Y-m-d H:i:s O'), ']: ', $this->description(), "\n";
-    }
-
-    /**
-     * Return command description
-     */
-    protected function description()
-    {
-        return 'Default command that does nothing (should never happen in real environment)';
+        $this->commandFactory = $commandFactory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    abstract public function id();
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function description();
+
+    /**
+     * @return CommandFactory
+     */
+    public function getCommandFactory(): CommandFactory
+    {
+        return $this->commandFactory;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(Elevator $elevator) : CommandInterface
     {
         return $this;
     }
+
 }

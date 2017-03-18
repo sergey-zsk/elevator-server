@@ -1,31 +1,42 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/service_container.html
 parameters:
-    #parameter_name: value
+    elevator.commands:
+        'Waiting External':
+            id: !php/const:AppBundle\Elevator\Command\WaitingExternal::ID
+            injection: command.waiting_external
 
 services:
-    amqp_stream_connection:
+    command.waiting_external:
+        class: AppBundle\Elevator\Command\WaitingExternal
+        arguments: ['@command_factory', '@amqp.connect.input.external']
+        shared: false
+
+    amqp.connect:
         class: PhpAmqpLib\Connection\AMQPStreamConnection
         arguments: ['%amqp_host%', '%amqp_port%', '%amqp_user%', '%amqp_password%']
 
+    amqp.connect.input.external:
+        class: AppBundle\Elevator\AmqpConnect
+        arguments: ['@amqp.connect', '%ampq_queue_waiting_external%']
+
+    amqp.connect.input.internal:
+        class: AppBundle\Elevator\AmqpConnection
+        arguments: ['@amqp.connect', test-connection-02]
+
+    amqp.connect.elevator.status:
+        class: AppBundle\Elevator\AmqpConnection
+        arguments: ['@amqp.connect', test-connection-03]
+
     elevator:
         class: AppBundle\Elevator\Elevator
-        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_doors_activity_time%', '%elevator_initial_floor%']
+        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_waiting_external_seconds%', '%elevator_initial_floor%']
 
-    initial_state:
-        class: AppBundle\Elevator\Command\WaitingExternal
-
-    elevator_server:
-        class: AppBundle\Elevator\Application\Server
-        arguments: ['@amqp_stream_connection', '%amqp_queue_name%']
-        autowire: true
-
-    elevator_client:
-        class: AppBundle\Elevator\Application\Client
-        arguments: ['@amqp_stream_connection', '%amqp_queue_name%']
-        autowire: true
+    command_factory:
+        class: AppBundle\Elevator\CommandFactory
+        arguments: ['@service_container', %elevator.commands%]
 
     elevator_emulate:
         class: AppBundle\Elevator\Device
-        arguments: ['@initial_state', '@elevator']
+        arguments: ['@command.waiting_external', '@elevator']
         autowire: true

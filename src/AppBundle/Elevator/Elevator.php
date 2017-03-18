@@ -30,7 +30,7 @@ class Elevator
      *
      * @var int
      */
-    protected $doorsActivityTime = 0;
+    protected $waitingExternalSeconds = 0;
 
     /**
      * Current floor
@@ -44,14 +44,14 @@ class Elevator
      *
      * @param int $totalFloors
      * @param int $elevatorSpeed
-     * @param int $doorsActivityTime
+     * @param int $waitingExternalSeconds
      * @param int $currentFloor
      */
-    function __construct(int $totalFloors, int $elevatorSpeed, int $doorsActivityTime, int $currentFloor)
+    function __construct(int $totalFloors, int $elevatorSpeed, int $waitingExternalSeconds, int $currentFloor)
     {
         $this->totalFloors = $totalFloors;
         $this->elevatorSpeed = $elevatorSpeed;
-        $this->doorsActivityTime = $doorsActivityTime;
+        $this->waitingExternalSeconds = $waitingExternalSeconds;
         $this->currentFloor = $currentFloor;
     }
 
@@ -74,9 +74,9 @@ class Elevator
     /**
      * @return int
      */
-    public function getDoorsActivityTime(): int
+    public function getWaitingExternalSeconds(): int
     {
-        return $this->doorsActivityTime;
+        return $this->waitingExternalSeconds;
     }
 
     /**
@@ -87,11 +87,4 @@ class Elevator
         return $this->currentFloor;
     }
 
-    /**
-     * Main elevator "routine" (really just emulation logic).
-     */
-    public function execute(float $micro)
-    {
-        //
-    }
 }

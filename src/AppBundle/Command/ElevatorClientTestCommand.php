@@ -5,7 +5,6 @@ namespace AppBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ElevatorClientTestCommand extends ContainerAwareCommand
@@ -15,21 +14,18 @@ class ElevatorClientTestCommand extends ContainerAwareCommand
         $this
             ->setName('elevator:client-test')
             ->setDescription('Launch elevator client')
-//            ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
-//            ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
+            ->addArgument('floor', InputArgument::REQUIRED, 'Floor number')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-//        $argument = $input->getArgument('argument');
-//
-//        if ($input->getOption('option')) {
-//            // ...
-//        }
+        $floor = $input->getArgument('floor');
 
-        $elevator = $this->getContainer()->get('elevator_client');
-        $elevator->execute();
+        $data = ['floor' => $floor, 'time' => mktime()];
+
+        $connect = $this->getContainer()->get('amqp.connect.input.external');
+        $connect->publish(json_encode($data));
     }
 
 }
