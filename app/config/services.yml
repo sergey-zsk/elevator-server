@@ -5,11 +5,27 @@ parameters:
         'Waiting External':
             id: !php/const:AppBundle\Elevator\Command\WaitingExternal::ID
             injection: command.waiting_external
+        'Moving':
+            id: !php/const:AppBundle\Elevator\Command\Moving::ID
+            injection: command.moving
+        'Open The Doors':
+            id: !php/const:AppBundle\Elevator\Command\OpenTheDoors::ID
+            injection: command.open_the_doors
 
 services:
     command.waiting_external:
         class: AppBundle\Elevator\Command\WaitingExternal
         arguments: ['@command_factory', '@amqp.connect.input.external']
+        shared: false
+
+    command.moving:
+        class: AppBundle\Elevator\Command\Moving
+        arguments: ['@command_factory']
+        shared: false
+
+    command.open_the_doors:
+        class: AppBundle\Elevator\Command\OpenTheDoors
+        arguments: ['@command_factory']
         shared: false
 
     amqp.connect:
@@ -24,13 +40,9 @@ services:
         class: AppBundle\Elevator\AmqpConnection
         arguments: ['@amqp.connect', test-connection-02]
 
-    amqp.connect.elevator.status:
-        class: AppBundle\Elevator\AmqpConnection
-        arguments: ['@amqp.connect', test-connection-03]
-
     elevator:
         class: AppBundle\Elevator\Elevator
-        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_waiting_external_seconds%', '%elevator_initial_floor%']
+        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_doors_activity_time%', '%elevator_initial_floor%']
 
     command_factory:
         class: AppBundle\Elevator\CommandFactory

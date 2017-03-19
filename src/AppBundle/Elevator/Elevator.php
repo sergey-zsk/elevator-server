@@ -26,11 +26,11 @@ class Elevator
     protected $totalFloors = 0;
 
     /**
-     * Number of microseconds to open/close doors
+     * Number of microseconds to open/close the doors
      *
      * @var int
      */
-    protected $waitingExternalSeconds = 0;
+    protected $doorsActivityTime = 0;
 
     /**
      * Current floor
@@ -40,19 +40,26 @@ class Elevator
     protected $currentFloor = 0;
 
     /**
+     * Destination floor
+     *
+     * @var int|null
+     */
+    protected $destinationFloor = null;
+
+    /**
      * Elevator constructor.
      *
      * @param int $totalFloors
      * @param int $elevatorSpeed
-     * @param int $waitingExternalSeconds
+     * @param int $doorsActivityTime
      * @param int $currentFloor
      */
-    function __construct(int $totalFloors, int $elevatorSpeed, int $waitingExternalSeconds, int $currentFloor)
+    function __construct(int $totalFloors, int $elevatorSpeed, int $doorsActivityTime, int $currentFloor)
     {
         $this->totalFloors = $totalFloors;
         $this->elevatorSpeed = $elevatorSpeed;
-        $this->waitingExternalSeconds = $waitingExternalSeconds;
         $this->currentFloor = $currentFloor;
+        $this->doorsActivityTime = $doorsActivityTime;
     }
 
     /**
@@ -74,9 +81,38 @@ class Elevator
     /**
      * @return int
      */
-    public function getWaitingExternalSeconds(): int
+    public function getDoorsActivityTime(): int
     {
-        return $this->waitingExternalSeconds;
+        return $this->doorsActivityTime;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDestinationFloor()
+    {
+        return $this->destinationFloor;
+    }
+
+    /**
+     * @param int|null $floor
+     * @return $this
+     */
+    public function setDestinationFloor($floor) : Elevator
+    {
+        // TODO: Move this logic to separate class
+        if ($floor === null) {
+            $this->destinationFloor = $floor;
+            return $this;
+        }
+
+        $maxFloors = $this->getTotalFloors();
+        if ($floor > $maxFloors) {
+            $floor = $maxFloors;
+        }
+
+        $this->destinationFloor = $floor;
+        return $this;
     }
 
     /**
@@ -87,4 +123,29 @@ class Elevator
         return $this->currentFloor;
     }
 
+    /**
+     * @param int $currentFloor
+     * @return Elevator
+     */
+    public function setCurrentFloor(int $currentFloor) : Elevator
+    {
+        $this->currentFloor = $currentFloor;
+        return $this;
+    }
+
+    /**
+     * Convert related to floor variables in JSON
+     *
+     * @return string
+     */
+    public function toJson()
+    {
+        $data = [
+            'totalFloors' => $this->getTotalFloors(),
+            'currentFloor' => $this->getCurrentFloor(),
+            'destinationFloor' => $this->getDestinationFloor(),
+        ];
+
+        return json_encode($data);
+    }
 }

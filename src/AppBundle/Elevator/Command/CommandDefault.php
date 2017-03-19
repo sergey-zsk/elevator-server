@@ -27,6 +27,7 @@ abstract class CommandDefault implements CommandInterface
      */
     function __construct(CommandFactory $commandFactory)
     {
+        $this->printInitMessage();
         $this->commandFactory = $commandFactory;
     }
 
@@ -46,6 +47,24 @@ abstract class CommandDefault implements CommandInterface
     public function getCommandFactory(): CommandFactory
     {
         return $this->commandFactory;
+    }
+
+    /**
+     * Simplest logging functionality
+     *
+     * @param $msg
+     */
+    protected function log($message)
+    {
+        echo '[', date('Y-m-d H:i:s O'), '], STE [' . $this->id() . ']: ', $message, "\n";
+    }
+
+    /**
+     * Initialization message
+     */
+    protected function printInitMessage()
+    {
+        $this->log($this->description());
     }
 
     /**

@@ -27,6 +27,11 @@ class WaitingExternal extends CommandDefault
      */
     protected $connect;
 
+    /**
+     * @var null
+     */
+    protected $floor = null;
+
     function __construct(CommandFactory $commandFactory, AmqpConnect $connect)
     {
         parent::__construct($commandFactory);
@@ -39,7 +44,7 @@ class WaitingExternal extends CommandDefault
      */
     public function id()
     {
-        return self::WAITING_EXTERNAL;
+        return self::ID;
     }
 
     /**
@@ -47,7 +52,7 @@ class WaitingExternal extends CommandDefault
      */
     public function description()
     {
-        return 'Waiting for commands from floors';
+        return 'Waiting for commands (from floors)';
     }
 
     /**
@@ -56,6 +61,22 @@ class WaitingExternal extends CommandDefault
     public function getConnect(): AmqpConnect
     {
         return $this->connect;
+    }
+
+    /**
+     * @return null
+     */
+    protected function getFloor()
+    {
+        return $this->floor;
+    }
+
+    /**
+     * @param null $floor
+     */
+    protected function setFloor($floor)
+    {
+        $this->floor = $floor;
     }
 
     /**
@@ -72,9 +93,9 @@ class WaitingExternal extends CommandDefault
             throw new Exception('Elevator is broken!');
         }
 
-        //$this->getCommandFactory()->createCommand();
+        $elevator->setDestinationFloor($this->getFloor());
 
-        return parent::execute($elevator);
+        return $this->getCommandFactory()->createCommand(Moving::ID);
     }
 
     /**
@@ -83,7 +104,9 @@ class WaitingExternal extends CommandDefault
      */
     public function callbackWaitingExternal(AMQPMessage $msgObj)
     {
-        echo 'X3: ', $msgObj->getBody(), "\n";
+        $data = json_decode($msgObj->getBody());
+        $this->setFloor($data->floor);
+
         $this->getConnect()->getChannel()->basic_cancel(self::AMQP_TAG);
     }
 

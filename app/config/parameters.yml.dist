@@ -28,5 +28,5 @@ parameters:
 
     elevator_total_floors: 25
     elevator_speed: 5000000
-    elevator_waiting_external_seconds: 5
+    elevator_doors_activity_time: 5
     elevator_initial_floor: 1
