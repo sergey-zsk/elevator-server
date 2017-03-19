@@ -109,7 +109,7 @@ class WaitingInternal extends CommandDefault
 
         $elevator->setDestinationFloor($this->getFloor());
 
-        return $this->getCommandFactory()->createCommand(Moving::ID);
+        return $this->getCommandFactory()->createCommand(CloseTheDoorsGo::ID);
     }
 
     /**

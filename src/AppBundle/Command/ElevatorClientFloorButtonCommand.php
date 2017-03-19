@@ -22,7 +22,7 @@ class ElevatorClientFloorButtonCommand extends ContainerAwareCommand
     {
         $floor = $input->getArgument('floor');
 
-        $connect = $this->getContainer()->get('amqp.connect.input');
+        $connect = $this->getContainer()->get('amqp.connect.input.all');
 
         $data = [
             'floor' => $floor,

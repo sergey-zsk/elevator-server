@@ -119,6 +119,10 @@ class Elevator
             $floor = $maxFloors;
         }
 
+        if ($floor <= 0) {
+            $floor = 1;
+        }
+
         $this->destinationFloor = $floor;
         return $this;
     }

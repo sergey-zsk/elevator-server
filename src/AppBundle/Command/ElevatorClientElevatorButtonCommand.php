@@ -22,15 +22,25 @@ class ElevatorClientElevatorButtonCommand extends ContainerAwareCommand
     {
         $floor = $input->getArgument('floor');
 
-        $connect = $this->getContainer()->get('amqp.connect.input');
+        $conn1st = $this->getContainer()->get('amqp.connect.input.all');
 
         $data = [
             'floor' => $floor,
-            'type' => $connect::CONN_TYPE_INTERNAL,
+            'type' => $conn1st::CONN_TYPE_INTERNAL,
             'time' => microtime()
         ];
 
-        $connect->publish(json_encode($data));
+        $conn1st->publish(json_encode($data));
+
+        $conn2nd = $this->getContainer()->get('amqp.connect.input.elevator');
+
+        $data = [
+            'floor' => $floor,
+            'type' => $conn2nd::CONN_TYPE_INTERNAL,
+            'time' => microtime()
+        ];
+
+        $conn2nd->publish(json_encode($data));
     }
 
 }

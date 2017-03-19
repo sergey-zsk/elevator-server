@@ -30,7 +30,7 @@ parameters:
 services:
     command.waiting_external:
         class: AppBundle\Elevator\Command\WaitingExternal
-        arguments: ['@command_factory', '@amqp.connect.input']
+        arguments: ['@command_factory', '@amqp.connect.input.all']
         shared: false
 
     command.moving:
@@ -50,7 +50,7 @@ services:
 
     command.waiting_internal:
         class: AppBundle\Elevator\Command\WaitingInternal
-        arguments: ['@command_factory', '@amqp.connect.input']
+        arguments: ['@command_factory', '@amqp.connect.input.elevator']
         shared: false
 
     command.no_command:
@@ -72,9 +72,13 @@ services:
         class: PhpAmqpLib\Connection\AMQPStreamConnection
         arguments: ['%amqp_host%', '%amqp_port%', '%amqp_user%', '%amqp_password%']
 
-    amqp.connect.input:
+    amqp.connect.input.all:
         class: AppBundle\Elevator\AmqpConnect
-        arguments: ['@amqp.connect', '%ampq_queue_waiting%']
+        arguments: ['@amqp.connect', '%ampq_channel_all%']
+
+    amqp.connect.input.elevator:
+        class: AppBundle\Elevator\AmqpConnect
+        arguments: ['@amqp.connect', '%ampq_channel_elevator%']
 
     elevator:
         class: AppBundle\Elevator\Elevator
