@@ -1,6 +1,6 @@
 <?php
 /**
- * Default command
+ * Waiting Internal Command
  *
  * User: Sergey Z
  * Date/Time: 18.03.17 2:25
@@ -14,14 +14,15 @@ use AppBundle\Elevator\Command\Util\CommandDefault;
 use AppBundle\Elevator\CommandFactory;
 use AppBundle\Elevator\CommandInterface;
 use AppBundle\Elevator\Elevator;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
-class WaitingExternal extends CommandDefault
+class WaitingInternal extends CommandDefault
 {
 
-    const ID = 10;
-    const AMQP_TAG = 'waiting-external';
+    const ID = 50;
+    const AMQP_TAG = 'waiting-internal';
 
     /**
      * @var AmqpConnect
@@ -34,7 +35,8 @@ class WaitingExternal extends CommandDefault
     protected $floor = null;
 
     /**
-     * WaitingExternal constructor.
+     * WaitingInternal constructor.
+     *
      * @param CommandFactory $commandFactory
      * @param AmqpConnect $connect
      */
@@ -58,7 +60,7 @@ class WaitingExternal extends CommandDefault
      */
     public function description()
     {
-        return 'Waiting for commands (floors, elevator)';
+        return 'Waiting for commands (elevator)';
     }
 
     /**
@@ -92,8 +94,14 @@ class WaitingExternal extends CommandDefault
     {
         $this->getConnect()->purge();
 
-        $channel = $this->getConnect()->consume(self::AMQP_TAG, array($this, 'callbackWaitingExternal'));
-        $channel->wait();
+        $channel = $this->getConnect()->consume(self::AMQP_TAG, array($this, 'callbackWaitingInternal'));
+
+        try {
+            $channel->wait(null, false, $elevator->getWaitingInternalSeconds());
+        } catch (AMQPTimeoutException $e) {
+            $this->getConnect()->cancel(self::AMQP_TAG);
+            return $this->getCommandFactory()->createCommand(NoCommand::ID);
+        }
 
         if (count($channel->callbacks) > 0) {
             throw new Exception('Elevator is broken!');
@@ -105,10 +113,9 @@ class WaitingExternal extends CommandDefault
     }
 
     /**
-     *
      * @param AMQPMessage $msgObj
      */
-    public function callbackWaitingExternal(AMQPMessage $msgObj)
+    public function callbackWaitingInternal(AMQPMessage $msgObj)
     {
         $data = json_decode($msgObj->getBody());
         $this->setFloor($data->floor);

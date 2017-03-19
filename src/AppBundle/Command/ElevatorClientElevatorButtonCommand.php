@@ -7,12 +7,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ElevatorClientTestCommand extends ContainerAwareCommand
+class ElevatorClientElevatorButtonCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('elevator:client-test')
+            ->setName('elevator:button:elevator')
             ->setDescription('Launch elevator client')
             ->addArgument('floor', InputArgument::REQUIRED, 'Floor number')
         ;
@@ -22,9 +22,14 @@ class ElevatorClientTestCommand extends ContainerAwareCommand
     {
         $floor = $input->getArgument('floor');
 
-        $data = ['floor' => $floor, 'time' => mktime()];
+        $connect = $this->getContainer()->get('amqp.connect.input');
 
-        $connect = $this->getContainer()->get('amqp.connect.input.external');
+        $data = [
+            'floor' => $floor,
+            'type' => $connect::CONN_TYPE_INTERNAL,
+            'time' => microtime()
+        ];
+
         $connect->publish(json_encode($data));
     }
 

@@ -9,6 +9,7 @@
 namespace AppBundle\Elevator\Command;
 
 
+use AppBundle\Elevator\Command\Util\CommandDefault;
 use AppBundle\Elevator\CommandInterface;
 use AppBundle\Elevator\Elevator;
 

@@ -6,7 +6,7 @@
  * Date/Time: 18.03.17 2:25
  */
 
-namespace AppBundle\Elevator\Command;
+namespace AppBundle\Elevator\Command\Util;
 
 
 use AppBundle\Elevator\CommandFactory;
@@ -52,11 +52,26 @@ abstract class CommandDefault implements CommandInterface
     /**
      * Simplest logging functionality
      *
-     * @param $msg
+     * @param string $message
+     * @param bool $isEol
+     * @param bool $isRaw
+     * @return CommandDefault
      */
-    protected function log($message)
+    protected function log(string $message, bool $isEol = true, bool $isRaw = false) : CommandDefault
     {
-        echo '[', date('Y-m-d H:i:s O'), '], STE [' . $this->id() . ']: ', $message, "\n";
+        $eol = '';
+        if ($isEol) {
+            $eol = "\n";
+        }
+
+        if ($isRaw) {
+            echo $message, $eol;
+            return $this;
+        }
+
+        echo '[', date('Y-m-d H:i:s O'), '], STE [' . $this->id() . ']: ', $message, $eol;
+
+        return $this;
     }
 
     /**

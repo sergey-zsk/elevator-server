@@ -8,18 +8,38 @@ parameters:
         'Moving':
             id: !php/const:AppBundle\Elevator\Command\Moving::ID
             injection: command.moving
+        'Floor is reached':
+            id: !php/const:AppBundle\Elevator\Command\DestinationReached::ID
+            injection: command.destination_reached
         'Open The Doors':
             id: !php/const:AppBundle\Elevator\Command\OpenTheDoors::ID
             injection: command.open_the_doors
+        'Waiting Internal':
+            id: !php/const:AppBundle\Elevator\Command\WaitingInternal::ID
+            injection: command.waiting_internal
+        'No Command':
+            id: !php/const:AppBundle\Elevator\Command\NoCommand::ID
+            injection: command.no_command
+        'Close The Doors':
+            id: !php/const:AppBundle\Elevator\Command\CloseTheDoors::ID
+            injection: command.close_the_doors
+        'Close The Doors (Go)':
+            id: !php/const:AppBundle\Elevator\Command\CloseTheDoorsGo::ID
+            injection: command.close_the_doors_go
 
 services:
     command.waiting_external:
         class: AppBundle\Elevator\Command\WaitingExternal
-        arguments: ['@command_factory', '@amqp.connect.input.external']
+        arguments: ['@command_factory', '@amqp.connect.input']
         shared: false
 
     command.moving:
         class: AppBundle\Elevator\Command\Moving
+        arguments: ['@command_factory']
+        shared: false
+
+    command.destination_reached:
+        class: AppBundle\Elevator\Command\DestinationReached
         arguments: ['@command_factory']
         shared: false
 
@@ -28,21 +48,37 @@ services:
         arguments: ['@command_factory']
         shared: false
 
+    command.waiting_internal:
+        class: AppBundle\Elevator\Command\WaitingInternal
+        arguments: ['@command_factory', '@amqp.connect.input']
+        shared: false
+
+    command.no_command:
+        class: AppBundle\Elevator\Command\NoCommand
+        arguments: ['@command_factory']
+        shared: false
+
+    command.close_the_doors:
+        class: AppBundle\Elevator\Command\CloseTheDoors
+        arguments: ['@command_factory']
+        shared: false
+
+    command.close_the_doors_go:
+        class: AppBundle\Elevator\Command\CloseTheDoorsGo
+        arguments: ['@command_factory']
+        shared: false
+
     amqp.connect:
         class: PhpAmqpLib\Connection\AMQPStreamConnection
         arguments: ['%amqp_host%', '%amqp_port%', '%amqp_user%', '%amqp_password%']
 
-    amqp.connect.input.external:
+    amqp.connect.input:
         class: AppBundle\Elevator\AmqpConnect
-        arguments: ['@amqp.connect', '%ampq_queue_waiting_external%']
-
-    amqp.connect.input.internal:
-        class: AppBundle\Elevator\AmqpConnection
-        arguments: ['@amqp.connect', test-connection-02]
+        arguments: ['@amqp.connect', '%ampq_queue_waiting%']
 
     elevator:
         class: AppBundle\Elevator\Elevator
-        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_doors_activity_time%', '%elevator_initial_floor%']
+        arguments: ['%elevator_total_floors%', '%elevator_speed%', '%elevator_doors_activity_time%', "%elevator_waiting_internal_seconds%", '%elevator_initial_floor%']
 
     command_factory:
         class: AppBundle\Elevator\CommandFactory

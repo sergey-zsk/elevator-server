@@ -24,9 +24,10 @@ parameters:
     amqp_password: guest
 
     amqp_queue_name: ~
-    ampq_queue_waiting_external: ~
+    ampq_queue_waiting: ~
 
     elevator_total_floors: 25
     elevator_speed: 5000000
     elevator_doors_activity_time: 5
     elevator_initial_floor: 1
+    elevator_waiting_internal_seconds: 5

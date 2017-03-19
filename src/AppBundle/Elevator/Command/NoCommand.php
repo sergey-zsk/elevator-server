@@ -9,14 +9,14 @@
 namespace AppBundle\Elevator\Command;
 
 
-use AppBundle\Elevator\Command\Util\TheDoors;
+use AppBundle\Elevator\Command\Util\CommandDefault;
 use AppBundle\Elevator\CommandInterface;
 use AppBundle\Elevator\Elevator;
 
-class OpenTheDoors extends TheDoors
+class NoCommand extends CommandDefault
 {
 
-    const ID = 40;
+    const ID = 60;
 
     /**
      * {@inheritdoc}
@@ -31,14 +31,15 @@ class OpenTheDoors extends TheDoors
      */
     public function description()
     {
-        return 'Opening the doors';
+        return 'No any command';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function next(Elevator $elevator): CommandInterface
+    public function execute(Elevator $elevator) : CommandInterface
     {
-        return $this->getCommandFactory()->createCommand(WaitingInternal::ID);
+        return $this->getCommandFactory()->createCommand(CloseTheDoors::ID);
     }
+
 }

@@ -47,6 +47,13 @@ class Elevator
     protected $destinationFloor = null;
 
     /**
+     * How long (in seconds) we can wait until the doors are closed
+     *
+     * @var int
+     */
+    protected $waitingInternalSeconds;
+
+    /**
      * Elevator constructor.
      *
      * @param int $totalFloors
@@ -54,12 +61,13 @@ class Elevator
      * @param int $doorsActivityTime
      * @param int $currentFloor
      */
-    function __construct(int $totalFloors, int $elevatorSpeed, int $doorsActivityTime, int $currentFloor)
+    function __construct(int $totalFloors, int $elevatorSpeed, int $doorsActivityTime, int $waitingInternalSeconds, int $currentFloor)
     {
         $this->totalFloors = $totalFloors;
         $this->elevatorSpeed = $elevatorSpeed;
         $this->currentFloor = $currentFloor;
         $this->doorsActivityTime = $doorsActivityTime;
+        $this->waitingInternalSeconds = $waitingInternalSeconds;
     }
 
     /**
@@ -100,7 +108,7 @@ class Elevator
      */
     public function setDestinationFloor($floor) : Elevator
     {
-        // TODO: Move this logic to separate class
+        // TODO: Move this logic to separate class (this requires at least one more new layer in hierarchy)
         if ($floor === null) {
             $this->destinationFloor = $floor;
             return $this;
@@ -134,6 +142,14 @@ class Elevator
     }
 
     /**
+     * @return int
+     */
+    public function getWaitingInternalSeconds(): int
+    {
+        return $this->waitingInternalSeconds;
+    }
+
+    /**
      * Convert related to floor variables in JSON
      *
      * @return string
@@ -148,4 +164,5 @@ class Elevator
 
         return json_encode($data);
     }
+
 }

@@ -13,10 +13,10 @@ use AppBundle\Elevator\Command\Util\TheDoors;
 use AppBundle\Elevator\CommandInterface;
 use AppBundle\Elevator\Elevator;
 
-class OpenTheDoors extends TheDoors
+class CloseTheDoors extends TheDoors
 {
 
-    const ID = 40;
+    const ID = 70;
 
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class OpenTheDoors extends TheDoors
      */
     public function description()
     {
-        return 'Opening the doors';
+        return 'Closing the doors';
     }
 
     /**
@@ -39,6 +39,6 @@ class OpenTheDoors extends TheDoors
      */
     protected function next(Elevator $elevator): CommandInterface
     {
-        return $this->getCommandFactory()->createCommand(WaitingInternal::ID);
+        return $this->getCommandFactory()->createCommand(WaitingExternal::ID);
     }
 }
