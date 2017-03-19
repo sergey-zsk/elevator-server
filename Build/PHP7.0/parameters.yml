@@ -1,0 +1,24 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: dev-db
+    database_port: null
+    database_name: null
+    database_user: root
+    database_password: null
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    secret: secret
+    amqp_host: dev-amqp
+    amqp_port: 5672
+    amqp_user: admin
+    amqp_password: secret
+    amqp_queue_name: elevator
+    ampq_channel_all: elevator.commands.all
+    ampq_channel_elevator: elevator.commands.elevator
+    elevator_total_floors: 9
+    elevator_speed: 1500000
+    elevator_doors_activity_time: 5
+    elevator_initial_floor: 1
+    elevator_waiting_internal_seconds: 15

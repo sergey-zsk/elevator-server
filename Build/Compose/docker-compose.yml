@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  amqp:
+    container_name: dev-amqp
+    image: rabbitmq:3-management-alpine
+    volumes:
+        - rabbitmq-v:/var/lib/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: admin
+        RABBITMQ_DEFAULT_PASS: secret
+
+  php70:
+    container_name: dev-php70
+    image: sergeyzskw/elevator-test-task
+    depends_on:
+        - amqp
+
+volumes:
+  rabbitmq-v:
+
